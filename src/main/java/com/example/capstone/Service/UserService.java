@@ -7,21 +7,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     ArrayList<User> users = new ArrayList<User>();
+    private final ArrayList<Product>cartItems= new ArrayList<>();
     ArrayList<Product> products = new ArrayList<>();
     private final MerchantService merchantService;
     private final ProductService productService;
     private final MerchantStockService merchantStockService;
-    private  final  ShoppingCartService shoppingCartService;
-
-
-
-
 
     public ArrayList<User> getUsers() {
         return users;
@@ -74,68 +72,24 @@ public class UserService {
         return 0;
     }
 
-    public void addProductToCart(int userId, int productId) {
-        User user = null;
-        for (User u : users) {
-            if (u.getId() == userId) {
-                user = u;
-                break;
-            }
-        }
 
-        Product product = null;
-        for (Product p : products) {
-            if (p.getId() == productId) {
-                product = p;
-                break;
-            }
-        }
 
-        if (user != null && product != null) {
-            shoppingCartService.addProductToCart(product);
-        }
+    public void addCartItem(Product product  ) {
+        cartItems.add(product);
+
     }
-
-
-    public List<Product> viewCart(int userId) {
-        User user = null;
-        for (User u : users) {
-            if (u.getId() == userId) {
-                user = u;
-                break;
-            }
-        }
-
-        if (user != null) {
-            return shoppingCartService.getCartItems();
-        }
-
-        return products;
+    public ArrayList<Product> getCartItems() {
+        return cartItems;
     }
-
-    public void checkout(int userId) {
-        User user = null;
-        for (User u : users) {
-            if (u.getId() == userId) {
-                user = u;
-                break;
+    public boolean discountProducts(double discountPercentage) {
+        boolean discounted = false;
+        for (Product product : products) {
+            double discountedPrice = product.getPrice() * (1 - discountPercentage / 100);
+            if (discountedPrice < product.getPrice()) {
+                product.setPrice(discountedPrice);
+                discounted = true;
             }
         }
-
-        List<Product> cartItems = shoppingCartService.getCartItems();
-        double totalAmount = 0.0;
-
-        for (Product product : cartItems) {
-            totalAmount += product.getPrice();
-        }
-
-        if (user != null && user.getBalance() >= totalAmount) {
-            user.setBalance(user.getBalance() - totalAmount);
-            shoppingCartService.clearCart();
-
-        }
-
-
+        return discounted;
     }}
-
 

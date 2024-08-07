@@ -87,28 +87,32 @@ return ResponseEntity.status(200).body("user found");
 
 
 
-    @PostMapping("/addToCart/{userId}/{productId}")
-    public ResponseEntity addToCart(@Valid@RequestBody@PathVariable int userId, @PathVariable int productId,Errors errors) {
+    @PostMapping("/addToCart")
+    public ResponseEntity addToCart(@Valid@RequestBody Product product,Errors errors) {
         if (errors.hasErrors()) {
             String message = errors.getFieldError().getDefaultMessage();
             return ResponseEntity.status(400).body(message);
         }
-        userService.addProductToCart(userId, productId);
+        userService.addCartItem(product);
         return ResponseEntity.status(200).body("Product added to cart");
     }
 
-    @GetMapping("/viewCart/{userId}")
-    public ResponseEntity viewCart(@PathVariable int userId) {
-       List<Product> cartItems = userService.viewCart(userId);
+    @GetMapping("/viewCart")
+    public ResponseEntity viewCart() {
+       List<Product> cartItems = userService.getCartItems();
         return ResponseEntity.status(200).body(cartItems);
     }
-
-
-    @PostMapping("/checkout/{userId}")
-    public ResponseEntity checkout(@PathVariable int userId) {
-        userService.checkout(userId);
-        return ResponseEntity.status(200).body("Checkout successful");
+    @PostMapping("/discount/{discountPercentage}")
+    public ResponseEntity applyDiscount(@PathVariable double discountPercentage) {
+        boolean discountApplied = userService.discountProducts(discountPercentage);
+        return ResponseEntity.status(200).body(discountApplied);
 }
+
+
+
+
+
+
 
 }
 
