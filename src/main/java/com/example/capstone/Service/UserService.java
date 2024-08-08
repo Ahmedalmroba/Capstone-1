@@ -78,18 +78,22 @@ public class UserService {
         cartItems.add(product);
 
     }
+     private final double buy = 1000.0;
+
     public ArrayList<Product> getCartItems() {
         return cartItems;
     }
-    public boolean discountProducts(double discountPercentage) {
-        boolean discounted = false;
-        for (Product product : products) {
-            double discountedPrice = product.getPrice() * (1 - discountPercentage / 100);
-            if (discountedPrice < product.getPrice()) {
-                product.setPrice(discountedPrice);
-                discounted = true;
-            }
+    public double checkout(int userId) {
+        double total = 0.0;
+        for (Product product : cartItems) {
+            total += product.getPrice();
         }
-        return discounted;
+
+        if (total > buy) {
+
+            total -= (total * 0.15);
+        }
+
+        return total;
     }}
 
