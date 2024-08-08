@@ -102,10 +102,10 @@ return ResponseEntity.status(200).body("user found");
        List<Product> cartItems = userService.getCartItems();
         return ResponseEntity.status(200).body(cartItems);
     }
-    @PostMapping("/discount/{discountPercentage}")
-    public ResponseEntity applyDiscount(@PathVariable double discountPercentage) {
-        boolean discountApplied = userService.discountProducts(discountPercentage);
-        return ResponseEntity.status(200).body(discountApplied);
+    @GetMapping("/getdiscount")
+    public ResponseEntity<String> getdiscount () {
+        String message = " discount applied";
+        return ResponseEntity.status(200).body(message);
 }
 
 
